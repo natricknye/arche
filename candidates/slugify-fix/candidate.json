@@ -1,0 +1,4 @@
+{
+  "task": "slugify",
+  "patch": "patch.diff"
+}
