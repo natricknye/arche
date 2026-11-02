@@ -52,9 +52,9 @@ flowchart TB
     TK["tasks/"]
     GH[".github/"]
   end
-  A -. "PR only" .-> HR
-  P -. "PR only" .-> TK
-  TL -. "PR only" .-> GH
+  A -.->|"PR only"| HR
+  P -.->|"PR only"| TK
+  TL -.->|"PR only"| GH
 ```
 
 - The agent pushes branches. It cannot merge, edit workflows, or read secrets.
@@ -65,7 +65,7 @@ flowchart TB
 
 ```mermaid
 sequenceDiagram
-  participant Bot as arche-rsi-bot[bot]
+  participant Bot as arche-rsi-bot
   participant GitHub
   participant Checks as Required checks
   participant Human
