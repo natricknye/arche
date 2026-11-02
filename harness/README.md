@@ -26,3 +26,17 @@ tasks/<id>/
 
 M0 uses file overlays instead of unified diffs because the goal is to validate the
 evaluator, not patch parsing. The mutator will produce real diffs later.
+
+## Mutator
+
+`bun run mutate <task>` calls an OpenAI-compatible chat completions endpoint,
+writes `candidates/<task>-model/`, and scores it. Configuration:
+
+```bash
+ARCHE_API_KEY=...
+ARCHE_BASE_URL=https://api.deepseek.com
+ARCHE_MODEL=deepseek-chat
+ARCHE_ENV_FILE=/path/to/api.env   # optional
+```
+
+Never commit the env file.

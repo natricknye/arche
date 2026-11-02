@@ -13,9 +13,9 @@ human merges only what survives.
 | Bootstrap | Repo, design, GitHub App, branch protection | done |
 | M0 | Task runner + 5 tasks, good/bad separation | done (#2) |
 | Candidate pipeline | Diff application + path guard | done (#3) |
-| Selection + archive | Per-task winner, JSONL lineage | in review (#4) |
-| M1 | LLM mutator, one generation | next |
-| M2 | Multi-generation, lineage, budget guard | pending |
+| Selection + archive | Per-task winner, JSONL lineage | done (#4) |
+| M1 | OpenAI-compatible mutator, first model run | in review (#5) |
+| M2 | Multi-generation, lineage, budget guard | next |
 | M3 | Self-modifying `agent/` under human gate | pending |
 
 Last updated: 2026-11-02. This file is updated with every milestone.
@@ -71,6 +71,22 @@ Every run appends one JSONL record per candidate: time, task, pass/fail, and
 duration. The selector picks the fastest passing candidate for each task. A task
 with no passing candidate stops the loop instead of falling back to an older
 result.
+
+## Mutator (M1)
+
+`bun run mutate <task>` asks an OpenAI-compatible model for a unified diff,
+writes it to `candidates/<task>-model/`, and scores it with the same runner.
+The key stays outside the repo:
+
+```bash
+ARCHE_API_KEY=... \
+ARCHE_BASE_URL=https://api.deepseek.com \
+ARCHE_MODEL=deepseek-chat \
+bun run mutate slugify
+```
+
+`ARCHE_ENV_FILE` can point at a file with the same keys. This is one candidate,
+not a generation; the loop that calls the mutator repeatedly is M2.
 
 ## Trust boundary
 
@@ -133,6 +149,7 @@ bun run m0                                    # good/bad separation on all tasks
 bun test harness                              # guard and candidate tests
 bun run candidate candidates/slugify-fix      # apply a real diff and score it
 bun run loop                                  # score the whole candidate pool
+bun run mutate slugify                        # requires ARCHE_API_KEY
 ```
 
 Expected:
