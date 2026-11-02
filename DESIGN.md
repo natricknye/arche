@@ -172,13 +172,14 @@ L3 的核心矛盾：执行改进的主体，和被改进的对象，是同一�
 
 | 身份 | 允许 | 禁止 |
 |---|---|---|
-| Agent bot | 读写自己仓库的分支；开 PR；读 CI 结果 | 合并、改 workflow、改 branch protection、读 secrets、改仓库设置 |
+| Agent（GitHub App） | 推分支；开 PR；读 CI 结果 | 合并、改 workflow、改 branch protection、读 secrets、改仓库设置 |
 | Human | 审批、合并、改 workflow | 日常不直接改 `agent/` |
 | CI | 读代码、跑测试、写结果 | 不持有模型 API key；不写仓库 |
 
 实现建议：
 
 - 用 GitHub App 或 fine-grained PAT，只给 `contents: write`（分支）和 `pull_requests: write`。
+- App 的 installation token 一小时过期，按需签发；私钥放在仓库外，不进入沙箱。
 - **不要用 classic PAT + `repo` scope**，那等于给了改一切的权利。
 - 仓库默认 `GITHUB_TOKEN` 权限设为 read-only，workflow 里显式声明最小权限。
 - Agent 的 token 放在独立环境，不进入沙箱。
