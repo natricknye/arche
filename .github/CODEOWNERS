@@ -1,0 +1,6 @@
+# Paths that define how Arche is allowed to improve itself.
+# These stay owned by a human. The agent can propose changes here, but it
+# should never be able to merge them on its own.
+/harness/   @natricknye
+/tasks/     @natricknye
+/.github/   @natricknye
