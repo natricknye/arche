@@ -1,0 +1,9 @@
+{
+  "name": "arche",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "m0": "bun harness/suite.ts",
+    "task": "bun harness/run.ts"
+  }
+}

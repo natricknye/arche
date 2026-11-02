@@ -1,0 +1,7 @@
+{
+  "id": "parse-duration",
+  "command": [
+    "bun",
+    "test"
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "id": "normalize-path",
+  "command": [
+    "bun",
+    "test"
+  ]
+}
