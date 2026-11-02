@@ -6,6 +6,7 @@
     "m0": "bun harness/suite.ts",
     "task": "bun harness/run.ts",
     "candidate": "bun harness/candidate.ts",
+    "loop": "bun harness/loop.ts",
     "test": "bun test harness"
   }
 }

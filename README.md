@@ -12,7 +12,8 @@ human merges only what survives.
 |---|---|---|
 | Bootstrap | Repo, design, GitHub App, branch protection | done |
 | M0 | Task runner + 5 tasks, good/bad separation | done (#2) |
-| Candidate pipeline | Diff application + path guard | in review (#3) |
+| Candidate pipeline | Diff application + path guard | done (#3) |
+| Selection + archive | Per-task winner, JSONL lineage | in review (#4) |
 | M1 | LLM mutator, one generation | next |
 | M2 | Multi-generation, lineage, budget guard | pending |
 | M3 | Self-modifying `agent/` under human gate | pending |
@@ -54,6 +55,22 @@ A candidate is a unified diff plus a small manifest. The guard runs before
 anything executes: absolute paths and `..` segments are rejected, and in self
 mode only `agent/`, `prompts/`, `tools/`, `docs/`, `README.md`, and `DESIGN.md`
 are mutable.
+
+## Selection and lineage
+
+```mermaid
+flowchart LR
+  P["candidate pool"] --> R["runner"]
+  R --> S{"select per task"}
+  S -->|"fastest passing"| W["winner"]
+  S -->|"none"| N["stop"]
+  R --> L[("runs/archive.jsonl")]
+```
+
+Every run appends one JSONL record per candidate: time, task, pass/fail, and
+duration. The selector picks the fastest passing candidate for each task. A task
+with no passing candidate stops the loop instead of falling back to an older
+result.
 
 ## Trust boundary
 
@@ -115,6 +132,7 @@ arche/
 bun run m0                                    # good/bad separation on all tasks
 bun test harness                              # guard and candidate tests
 bun run candidate candidates/slugify-fix      # apply a real diff and score it
+bun run loop                                  # score the whole candidate pool
 ```
 
 Expected:
@@ -129,6 +147,7 @@ Expected:
 - A good patch passes its tests; a bad patch fails them.
 - A candidate diff is applied to a fresh copy and scored by the task's tests.
 - A diff that escapes the mutable scope is rejected before it runs.
+- A task with no passing candidate fails the loop instead of silently reusing the last winner.
 - A mismatch fails the suite with a non-zero exit code.
 
 What it does not prove: that the tasks are hard enough, or that the model cannot
