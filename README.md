@@ -11,7 +11,8 @@ human merges only what survives.
 | Milestone | What | State |
 |---|---|---|
 | Bootstrap | Repo, design, GitHub App, branch protection | done |
-| M0 | Task runner + 5 tasks, good/bad separation | in review (#2) |
+| M0 | Task runner + 5 tasks, good/bad separation | done (#2) |
+| Candidate pipeline | Diff application + path guard | in review (#3) |
 | M1 | LLM mutator, one generation | next |
 | M2 | Multi-generation, lineage, budget guard | pending |
 | M3 | Self-modifying `agent/` under human gate | pending |
@@ -37,6 +38,22 @@ flowchart LR
 
 The loop is only as good as the evaluator. M0 exists to prove the evaluator can
 tell a good patch from a bad one before any model is involved.
+
+## Candidate pipeline
+
+```mermaid
+flowchart LR
+  C["candidate.json + patch.diff"] --> V{"validate paths"}
+  V -->|"outside scope"| R["reject"]
+  V -->|"allowed"| A["apply in temp repo"]
+  A --> T["run task tests"]
+  T --> M["metrics"]
+```
+
+A candidate is a unified diff plus a small manifest. The guard runs before
+anything executes: absolute paths and `..` segments are rejected, and in self
+mode only `agent/`, `prompts/`, `tools/`, `docs/`, `README.md`, and `DESIGN.md`
+are mutable.
 
 ## Trust boundary
 
@@ -92,10 +109,12 @@ arche/
   DESIGN.md       # full design and threat model
 ```
 
-## Run M0
+## Run the harness
 
 ```bash
-bun run m0
+bun run m0                                    # good/bad separation on all tasks
+bun test harness                              # guard and candidate tests
+bun run candidate candidates/slugify-fix      # apply a real diff and score it
 ```
 
 Expected:
@@ -104,10 +123,12 @@ Expected:
 5/5 tasks separated good from bad
 ```
 
-## What M0 proves
+## What the harness proves
 
 - A task can be reproduced in an isolated temp directory.
 - A good patch passes its tests; a bad patch fails them.
+- A candidate diff is applied to a fresh copy and scored by the task's tests.
+- A diff that escapes the mutable scope is rejected before it runs.
 - A mismatch fails the suite with a non-zero exit code.
 
 What it does not prove: that the tasks are hard enough, or that the model cannot

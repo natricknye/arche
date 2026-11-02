@@ -4,6 +4,8 @@
   "type": "module",
   "scripts": {
     "m0": "bun harness/suite.ts",
-    "task": "bun harness/run.ts"
+    "task": "bun harness/run.ts",
+    "candidate": "bun harness/candidate.ts",
+    "test": "bun test harness"
   }
 }
