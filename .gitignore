@@ -3,3 +3,4 @@
 .secrets/
 arche-token.txt
 node_modules/
+runs/
