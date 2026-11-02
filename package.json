@@ -7,6 +7,7 @@
     "task": "bun harness/run.ts",
     "candidate": "bun harness/candidate.ts",
     "loop": "bun harness/loop.ts",
+    "mutate": "bun harness/mutate.ts",
     "test": "bun test harness"
   }
 }
